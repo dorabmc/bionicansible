@@ -1,0 +1,2 @@
+Defaults:dorab !requiretty
+dorab ALL=(ALL) NOPASSWD: ALL

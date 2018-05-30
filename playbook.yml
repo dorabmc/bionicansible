@@ -1,0 +1,208 @@
+---
+# After a fresh install of Ubuntu 18.04,
+# With all default options, and a user dorab.
+# Note: May need to install drivers.
+# Create /etc/sudoers.d/dorab which contains
+# dorab ALL=(ALL) NOPASSWD:ALL
+# And is mode 600 with root.root.
+# Install ansible
+# sudo apt-add-repository -y ppa:ansible/ansible
+# sudo apt update
+# sudo apt -y install ansible
+
+# There seems to be a problem with grub after doing a dist-upgrade.
+# See
+# https://gist.github.com/maxivak/c318fd085231b9ab934e631401c876b1
+# For more... [[Perhaps fixed in 18.04?]]
+
+# Use vagrant reload instead of reboot on the vagrant host.
+
+# TODO: virtualbox
+# sudo apt-add-repository "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -cs) contrib"
+# wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+# wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+# sudo apt update
+# sudo apt -y install virtualbox-5.2
+
+# TODO: vagrant
+# Latest vagrant is usually NOT in the repo. So ...
+# First find the latest release version. Then ...
+# cd /tmp && wget https://releases.hashicorp.com/vagrant/<version>/vagrant_<version>_x86_64.deb
+# cd /tmp && sudo dpkg -i vagrant_<version>_x86_64.deb
+#
+# vagrant init bento/ubuntu-16.04
+# vagrant up
+# vagrant ssh
+
+# TODO: How to set up private keys?
+# TODO: make the user addition to be parameterized
+# TODO: Harden ssh
+# TODO: Make caps lock be control
+# TODO: Allow Vino to accept connections from Macs (turn off encryption)
+# TODO: handle backups - and configure directories to ignore
+
+# TODO: Currently using gnome-tweak tool
+# for mapping CAPS LOCK -> Ctrl.
+# Not sure which to use instead: gsettings or dconf-tools (or both)
+# dconf-tools? does not seem to install gsettings.
+
+- hosts: all
+  become: true
+  # gather_facts needs to be false only for the bootstrap installation of python.
+  # There may be other reasons to set gather_facts to false as well.
+  # Having to do with multiple playbooks.
+  gather_facts: false
+  pre_tasks:
+    # install python only if ping fails
+    - name: Try ping first to see if a python2 already exists
+      ping:
+      ignore_errors: true
+      register: ping_reg
+    - name: Bootstrap installation of python2
+      raw: apt-get -y install python
+      when: ping_reg is failed
+    - name: Gather facts anyways
+      action: setup
+  tasks:
+    # Keys first, then repos, then the dist-upgrade.
+    - name: Add signing keys for Google chrome
+      apt_key:
+        url: https://dl.google.com/linux/linux_signing_key.pub
+        state: present
+    - name: Add repository for Google chrome
+      apt_repository:
+        repo: deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main
+        filename: google-chrome
+        state: present
+    - name: Do a dist-upgrade
+      apt:
+        upgrade: dist
+        update_cache: yes
+    - name: Install the lastest versions of listed packages
+      apt:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+      loop:
+        - gnome-tweak-tool      # for caps lock -> control
+        - git
+        - screen
+        - emacs
+        - keychain
+        - default-jdk
+        - openjdk-8-jdk         # For Clojure
+        - firefox               # Likely installed already
+        - libreoffice           # Likely installed already
+        - google-chrome-stable
+    # Too bad we cannot use the alternatives module
+    # as it would require listing each java command.
+    - name: Check if jdk8 is default
+      command: update-alternatives --display java
+      register: chkjava
+      changed_when: false
+    - name: Choose jdk8 as default for Clojure
+      command: update-java-alternatives --set java-1.8.0-openjdk-amd64
+      when: chkjava.stdout.find('link currently points to /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java') == -1
+    - name: Remove unneeded stuff
+      apt:
+        autoremove: yes
+    #########
+    # Now the user-specific stuff
+    - name: Ensure there is group dorab
+      group:
+        name: dorab
+    - name: Ensure there is a user dorab
+      user:
+        name: dorab
+        group: dorab
+        groups: adm,cdrom,sudo,dip,plugdev,lpadmin,sambashare
+        shell: /bin/bash
+        comment: "Dorab Patel,,,"
+    - name: Ensure a bin directory
+      file:
+        path: ~dorab/bin
+        owner: dorab
+        group: dorab
+        state: directory
+    - name: Add authorized public keys
+      authorized_key:
+        user: dorab
+        key: "{{ item }}"
+      with_file:
+        - files/dorab-optiplex-ed25519-20161201.pub
+    - name: Ensure sudo without password
+      copy:
+        src: files/sudoers-dorab
+        dest: /etc/sudoers.d/dorab
+        owner: root
+        group: root
+        mode: 0600
+    - name: Ensure there is a .emacs.d directory
+      file:
+        path: ~dorab/.emacs.d
+        owner: dorab
+        group: dorab
+        state: directory
+    - name: Ensure there is an init.el in the .emacs.d directory
+      copy:
+        src: files/init.el
+        dest: ~dorab/.emacs.d/init.el
+        owner: dorab
+    # TODO: Install all current emacs packages
+    # emacs --batch -exec package-install-selected-packages
+    # Assumes git is installed earlier.
+    - name: Ensure my global git config
+      git_config:
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
+        scope: global
+      become: yes
+      become_user: dorab
+      loop:
+        - { key: 'user.name', value: 'Dorab Patel' }
+        - { key: 'user.email', value: 'dorab@matchcraft.com' }
+        - { key: 'core.editor', value: 'emacs' }
+        - { key: 'push.default', value: 'simple' }
+    - name: Ensure git config dir exists
+      file:
+        path: ~dorab/.config/git
+        owner: dorab
+        group: dorab
+        mode: 0700
+        state: directory
+    - name: Ensure my global gitignore
+      copy:
+        src: files/global_gitignore
+        dest: ~dorab/.config/git/ignore
+        owner: dorab
+        group: dorab
+    - name: Ensure my screenrc
+      copy:
+        src: files/screenrc
+        dest: ~dorab/.screenrc
+        owner: dorab
+        group: dorab
+    - name: Ensure keychain is started from .profile
+      blockinfile:
+        dest: ~dorab/.profile
+        block: |
+          eval `keychain --eval --quiet --quick`
+    - name: Ensure leiningen
+      get_url:
+        url: https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+        dest: ~dorab/bin/lein
+        mode: 0755
+        owner: dorab
+        group: dorab
+    - name: Ensure ~/.lein
+      file:
+        path: ~dorab/.lein
+        state: directory
+        owner: dorab
+        group: dorab
+    - name: Copy over profiles.clj
+      copy:
+        src: files/profiles.clj
+        dest: ~dorab/.lein/profiles.clj
+        owner: dorab
+        group: dorab

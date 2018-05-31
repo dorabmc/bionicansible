@@ -37,14 +37,12 @@
 # TODO: How to set up private keys?
 # TODO: make the user addition to be parameterized
 # TODO: Harden ssh
-# TODO: Make caps lock be control
 # TODO: Allow Vino to accept connections from Macs (turn off encryption)
 # TODO: handle backups - and configure directories to ignore
 
-# TODO: Currently using gnome-tweak tool
-# for mapping CAPS LOCK -> Ctrl.
-# Not sure which to use instead: gsettings or dconf-tools (or both)
-# dconf-tools? does not seem to install gsettings.
+# curl -O https://download.clojure.org/install/linux-install-1.9.0.381.sh
+# chmod +x linux-install-1.9.0.381.sh
+# sudo ./linux-install-1.9.0.381.sh
 
 - hosts: all
   become: true
@@ -84,7 +82,9 @@
         state: latest
         update_cache: yes
       loop:
-        - gnome-tweak-tool      # for caps lock -> control
+        - python-pip            # for the pip module
+        - dconf-tools           # for caps lock -> control
+        - curl
         - git
         - screen
         - emacs
@@ -103,9 +103,30 @@
     - name: Choose jdk8 as default for Clojure
       command: update-java-alternatives --set java-1.8.0-openjdk-amd64
       when: chkjava.stdout.find('link currently points to /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java') == -1
-    - name: Remove unneeded stuff
+    # Deal with openjdk8 bugs on ubuntu 18.04
+    - name: Check if bad cacerts file exists
+      command: sha256sum /etc/ssl/certs/java/cacerts
+      register: chkcacerts
+      changed_when: false
+    - name: Remove bad cacerts file
+      file:
+        path: /etc/ssl/certs/java/cacerts
+        state: absent
+      when: chkcacerts.stdout.find('c8f5854f9963dd3e5a5c049af0658e06954d98e7cc9c9dc607401a8435b7abc7') >= 0
+    - name: Update the cacerts
+      command: update-ca-certificates --fresh
+      when: chkcacerts.stdout.find('c8f5854f9963dd3e5a5c049af0658e06954d98e7cc9c9dc607401a8435b7abc7') >= 0
+    # Clean up
+    - name: Remove unneeded apt stuff
       apt:
         autoremove: yes
+    - name: Install python packages via pip
+      pip:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - virtualenv
+        - psutil                # for the dconf ansible module
     #########
     # Now the user-specific stuff
     - name: Ensure there is group dorab
@@ -150,6 +171,14 @@
         owner: dorab
     # TODO: Install all current emacs packages
     # emacs --batch -exec package-install-selected-packages
+    - name: Set dconf settings
+      dconf:
+        key: "{{ item.key }}"
+        value: "{{ item.value }}"
+      become: yes
+      become_user: dorab
+      loop:
+        - { key: '/org/gnome/desktop/input-sources/xkb-options', value: "['caps:ctrl_modifier']" }
     # Assumes git is installed earlier.
     - name: Ensure my global git config
       git_config:

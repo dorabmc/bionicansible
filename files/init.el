@@ -68,7 +68,7 @@
     (("melpa-stable" . "http://stable.melpa.org/packages/")
      ("gnu" . "http://elpa.gnu.org/packages/")
      ("org" . "http://orgmode.org/elpa/"))))
- '(package-pinned-packages (quote ((org . "org"))))
+ '(package-pinned-packages (quote ((org . "org") (cider . "melpa-stable"))))
  '(package-selected-packages
    (quote
     (cider exec-path-from-shell magit markdown-mode org sql-indent terraform-mode yaml-mode)))

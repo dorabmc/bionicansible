@@ -30,16 +30,17 @@
 # cd /tmp && wget https://releases.hashicorp.com/vagrant/<version>/vagrant_<version>_x86_64.deb
 # cd /tmp && sudo dpkg -i vagrant_<version>_x86_64.deb
 #
-# vagrant init bento/ubuntu-16.04
+# vagrant init bento/ubuntu-18.04
 # vagrant up
 # vagrant ssh
 
 # TODO: How to set up private keys?
+# TODO: How to set up (copy?) previous GPG2 db?
 # TODO: make the user addition to be parameterized
 # TODO: Harden ssh
 # TODO: Allow Vino to accept connections from Macs (turn off encryption)
-# TODO: handle backups - and configure directories to ignore
 
+# TODO: Until Clojure has an apt installer, do this
 # curl -O https://download.clojure.org/install/linux-install-1.9.0.381.sh
 # chmod +x linux-install-1.9.0.381.sh
 # sudo ./linux-install-1.9.0.381.sh
@@ -179,6 +180,17 @@
       become_user: dorab
       loop:
         - { key: '/org/gnome/desktop/input-sources/xkb-options', value: "['caps:ctrl_modifier']" }
+        # TODO: Fix the password
+        - { key: '/org/gnome/desktop/remote-access/vnc-password', value: "'b3B0aXBsZXg='" }
+        - { key: '/org/gnome/desktop/remote-access/authentication-methods', value: "['vnc']" }
+        - { key: '/org/gnome/desktop/remote-access/prompt-enabled', value: "false" }
+        - { key: '/org/gnome/deja-dup/backend', value: "'local'" }
+        - { key: '/org/gnome/deja-dup/periodic', value: "true" }
+        - { key: '/org/gnome/deja-dup/periodic-period', value: "1" }
+        - { key: '/org/gnome/deja-dup/exclude-list', value: "['$TRASH', '$DOWNLOAD', '/home/dorab/VirtualBox VMs', '/home/dorab/.vagrant', '/home/dorab/.vagrant.d']" }
+        # - { key: '/org/gnome/deja-dup/prompt-check', value: "'2018-05-24T20:34:03.774523Z'" }
+        # Assumes BackupVolume has been setup earlier
+        - { key: '/org/gnome/deja-dup/local/folder', value: "'/media/dorab/BackupVolume'" }
     # Assumes git is installed earlier.
     - name: Ensure my global git config
       git_config:

@@ -10,11 +10,6 @@
 # sudo apt update
 # sudo apt -y install ansible
 
-# There seems to be a problem with grub after doing a dist-upgrade.
-# See
-# https://gist.github.com/maxivak/c318fd085231b9ab934e631401c876b1
-# For more... [[Perhaps fixed in 18.04?]]
-
 # Use vagrant reload instead of reboot on the vagrant host.
 
 # TODO: virtualbox
@@ -184,6 +179,8 @@
         - { key: '/org/gnome/desktop/remote-access/vnc-password', value: "'b3B0aXBsZXg='" }
         - { key: '/org/gnome/desktop/remote-access/authentication-methods', value: "['vnc']" }
         - { key: '/org/gnome/desktop/remote-access/prompt-enabled', value: "false" }
+        # Disabling encryption is required for Macs and Windows to connect.
+        - { key: '/org/gnome/desktop/remote-access/require-encryption', value: "false" }
         - { key: '/org/gnome/deja-dup/backend', value: "'local'" }
         - { key: '/org/gnome/deja-dup/periodic', value: "true" }
         - { key: '/org/gnome/deja-dup/periodic-period', value: "1" }

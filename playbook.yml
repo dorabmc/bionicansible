@@ -15,12 +15,6 @@
 
 # Use vagrant reload instead of reboot on the vagrant host.
 
-# TODO: vagrant
-# Latest vagrant is usually NOT in the repo. So ...
-# First find the latest release version. Then ...
-# cd /tmp && wget https://releases.hashicorp.com/vagrant/<version>/vagrant_<version>_x86_64.deb
-# cd /tmp && sudo dpkg -i vagrant_<version>_x86_64.deb
-#
 # vagrant init bento/ubuntu-18.04
 # vagrant up
 # vagrant ssh
@@ -111,7 +105,11 @@
       command: update-ca-certificates --fresh
       when: chkcacerts.stdout.find('c8f5854f9963dd3e5a5c049af0658e06954d98e7cc9c9dc607401a8435b7abc7') >= 0
     - name: Check latest vagrant version
-      shell: curl -s https://releases.hashicorp.com/vagrant/ | grep '<a href="/vagrant/[0-9]*\.[0-9]*\.[0-9]*/">' | head -1 | sed -e 's|.*/vagrant/||' -e 's|/.*||'
+      shell: >-
+        curl -s https://releases.hashicorp.com/vagrant/ |
+        grep '<a href="/vagrant/[0-9]*\.[0-9]*\.[0-9]*/">' |
+        head -1 |
+        sed -e 's|.*/vagrant/||' -e 's|/.*||'
       args:
         warn: false
       register: chkvagrantlatest
@@ -123,7 +121,9 @@
       failed_when: chkvagrantcurrent.rc > 1
     - name: Install latest vagrant
       apt:
-        deb: "https://releases.hashicorp.com/vagrant/{{ chkvagrantlatest.stdout }}/vagrant_{{ chkvagrantlatest.stdout }}_x86_64.deb"
+        deb: "https://releases.hashicorp.com/vagrant/\
+        {{ chkvagrantlatest.stdout }}/vagrant_\
+        {{ chkvagrantlatest.stdout }}_x86_64.deb"
       when: chkvagrantlatest.stdout != chkvagrantcurrent.stdout
     # Clean up
     - name: Remove unneeded apt stuff
@@ -161,7 +161,7 @@
         path: ~dorab/.ssh
         owner: dorab
         group: dorab
-        mode: 0775
+        mode: 0755
         state: directory
     - name: Add authorized public keys
       authorized_key:

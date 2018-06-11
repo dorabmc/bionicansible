@@ -1,0 +1,52 @@
+# Mostly from https://stribika.github.io/2015/01/04/secure-secure-shell.html
+# To generate a key pair, run
+# ssh-keygen -t ed25519 -o -a 100 -C "$(whoami)@$(hostname)_$(date -I)"
+
+# Note that the first match (NOT last match) wins in this config file.
+
+Host mc
+    User dorab
+    PasswordAuthentication yes
+    HostName srvr03.matchcraft.com
+
+Host axe
+    User dorab
+    HostName axe.matchcraft.com
+    IdentityFile ~/.ssh/dorab-awsaxe-key
+
+Host cutlass
+    User mc
+    HostName cutlass.matchcraft.com
+#    LocalForward 3307 127.0.0.1:3307
+    IdentityFile ~/.ssh/id_ed25519
+
+Host optiplex9020
+    User dorab
+    PasswordAuthentication yes
+    HostName dorab-optiplex-9020.matchcraft.com
+    IdentityFile ~/.ssh/id_ed25519
+
+Host mc-git
+    User mc
+    HostName mc-git.rd43.com
+    IdentityFile ~/.ssh/id_ed25519
+
+Host github
+    User git
+    HostName github.com
+    IdentityFile ~/.ssh/id_ed25519
+
+Host *
+    Protocol 2
+    UseRoaming no
+    ServerAliveInterval 180
+    GSSAPIAuthentication no
+    PasswordAuthentication no
+# Might want ChallengeResponseAuthentication if using 2FA
+    ChallengeResponseAuthentication no
+    PubkeyAuthentication yes
+    HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com,ssh-rsa-cert-v01@openssh.com,ssh-ed25519,ssh-rsa
+    KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+    Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+    MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com
+

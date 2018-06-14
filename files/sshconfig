@@ -26,6 +26,12 @@ Host optiplex9020
     HostName dorab-optiplex-9020.matchcraft.com
     IdentityFile ~/.ssh/id_ed25519
 
+Host optiplex980
+    User dorab
+    PasswordAuthentication yes
+    HostName dorab-optiplex-980.matchcraft.com
+    IdentityFile ~/.ssh/id_ed25519
+
 Host mc-git
     User mc
     HostName mc-git.rd43.com

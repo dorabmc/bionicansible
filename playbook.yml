@@ -19,8 +19,13 @@
 # vagrant up
 # vagrant ssh
 
-# TODO: How to set up private keys?
-# TODO: How to set up (copy?) previous GPG2 db?
+# TODO: afterwards
+# scp -p remote:.ssh/id_ed25519 ~/.ssh
+# scp -r -p remote:.gnupg ~
+# scp -r -p remote:Projects/* ~/Projects
+
+# TODO: Configure Chrome: no password saving.
+# TODO: Perhaps download graphics drivers?
 # TODO: make the user addition to be parameterized
 # TODO: Harden ssh
 # TODO: Set up printers.
@@ -31,6 +36,19 @@
 # sudo ./linux-install-1.9.0.381.sh
 
 - hosts: all
+  vars:
+    favorites: "['org.gnome.Nautilus.desktop',\
+    'libreoffice-writer.desktop',\
+    'org.gnome.Software.desktop',\
+    'firefox.desktop',\
+    'google-chrome.desktop',\
+    'emacs25.desktop',\
+    'org.gnome.Terminal.desktop']"
+    backup_excludes: "['$TRASH',\
+    '$DOWNLOAD',\
+    '/home/dorab/VirtualBox VMs',\
+    '/home/dorab/.vagrant',\
+    '/home/dorab/.vagrant.d']"
   become: true
   # gather_facts needs to be false only for the bootstrap installation of python.
   # There may be other reasons to set gather_facts to false as well.
@@ -82,6 +100,13 @@
         - firefox               # Likely installed already
         - libreoffice           # Likely installed already
         - google-chrome-stable
+    - name: Purge installed apps
+      apt:
+        name: "{{ item }}"
+        state: absent
+        purge: yes
+      loop:
+        - ubuntu-web-launchers  # for Amazon
     # Too bad we cannot use the alternatives module
     # as it would require listing each java command.
     - name: Check if jdk8 is default
@@ -136,6 +161,24 @@
       loop:
         - virtualenv
         - psutil                # for the dconf ansible module
+    - name: Enable firewall
+      ufw:
+        state: enabled
+    - name: Default firewall ingress rule
+      ufw:
+        direction: incoming
+        policy: deny
+    - name: Default firewall egress rule
+      ufw:
+        direction: outgoing
+        policy: allow
+    - name: Firewall ingress allow rules
+      ufw:
+        rule: allow
+        proto: "{{ item.proto }}"
+        port: "{{ item.port }}"
+      loop:
+        - { proto: 'tcp', port: 'ssh' }
     #########
     # Now the user-specific stuff
     - name: Ensure there is group dorab
@@ -161,7 +204,7 @@
         path: ~dorab/.ssh
         owner: dorab
         group: dorab
-        mode: 0755
+        mode: 0700
         state: directory
     - name: Add authorized public keys
       authorized_key:
@@ -169,6 +212,7 @@
         key: "{{ item }}"
       with_file:
         - files/dorab-optiplex-ed25519-20161201.pub
+        - files/dorab-imac-ed25519-20161125.pub
     - name: Add ssh client config
       copy:
         src: files/sshconfig
@@ -204,6 +248,7 @@
       become_user: dorab
       loop:
         - { key: '/org/gnome/desktop/input-sources/xkb-options', value: "['caps:ctrl_modifier']" }
+        - { key: '/org/gnome/shell/favorite-apps', value: "{{ favorites }}" }
         # TODO: Fix the password
         - { key: '/org/gnome/desktop/remote-access/vnc-password', value: "'b3B0aXBsZXg='" }
         - { key: '/org/gnome/desktop/remote-access/authentication-methods', value: "['vnc']" }
@@ -213,8 +258,7 @@
         - { key: '/org/gnome/deja-dup/backend', value: "'local'" }
         - { key: '/org/gnome/deja-dup/periodic', value: "true" }
         - { key: '/org/gnome/deja-dup/periodic-period', value: "1" }
-        - { key: '/org/gnome/deja-dup/exclude-list', value: "['$TRASH', '$DOWNLOAD', '/home/dorab/VirtualBox VMs', '/home/dorab/.vagrant', '/home/dorab/.vagrant.d']" }
-        # - { key: '/org/gnome/deja-dup/prompt-check', value: "'2018-05-24T20:34:03.774523Z'" }
+        - { key: '/org/gnome/deja-dup/exclude-list', value: "{{ backup_excludes }}" }
         # Assumes BackupVolume has been setup earlier
         - { key: '/org/gnome/deja-dup/local/folder', value: "'/media/dorab/BackupVolume'" }
     # Assumes git is installed earlier.

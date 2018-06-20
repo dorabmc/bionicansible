@@ -19,7 +19,7 @@
 # vagrant up
 # vagrant ssh
 
-# TODO: afterwards
+# TODO: after installing with ansible
 # scp -p original:~/.ssh/id_ed25519 ~/.ssh
 # scp -p original:~/.aws/credentials ~/.aws
 # scp -r -p original:~/.gnupg ~
@@ -31,11 +31,6 @@
 # TODO: make the user addition to be parameterized
 # TODO: Harden ssh
 # TODO: Set up printers.
-
-# TODO: Until Clojure has an apt installer, do this
-# curl -O https://download.clojure.org/install/linux-install-1.9.0.381.sh
-# chmod +x linux-install-1.9.0.381.sh
-# sudo ./linux-install-1.9.0.381.sh
 
 - hosts: all
   vars:
@@ -75,6 +70,10 @@
       apt_key:
         url: https://dl.google.com/linux/linux_signing_key.pub
         state: present
+    - name: Add repository for ansible
+      apt_repository:
+        repo: ppa:ansible/ansible
+        state: present
     - name: Add repository for Google chrome
       apt_repository:
         repo: deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main
@@ -90,6 +89,7 @@
         state: latest
         update_cache: yes
       loop:
+        - ansible
         - python-pip            # for the pip module
         - dconf-tools           # for caps lock -> control
         - curl
@@ -99,6 +99,7 @@
         - keychain
         - default-jdk
         - openjdk-8-jdk         # For Clojure
+        - awscli
         - virtualbox
         - virtualbox-guest-additions-iso
         - firefox               # Likely installed already
@@ -110,7 +111,7 @@
         state: absent
         purge: yes
       loop:
-        - ubuntu-web-launchers  # for Amazon
+        - ubuntu-web-launchers  # to remove Amazon icon from launcher
     # Too bad we cannot use the alternatives module
     # as it would require listing each java command.
     - name: Check if jdk8 is default

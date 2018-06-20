@@ -29,8 +29,14 @@
 # TODO: Configure Chrome: no password saving.
 # TODO: Perhaps download graphics drivers?
 # TODO: make the user addition to be parameterized
-# TODO: Harden ssh
-# TODO: Set up printers.
+# TODO: Harden sshd (maybe already OK).
+# TODO: Set up default printer.
+# Stop cupsd
+# In /etc/cups/printers.conf
+# <DefaultPrinter HP_LaserJet_600_M601_025E84>
+# ...
+# </DefaultPrinter>
+# Restart cupsd
 
 - hosts: all
   vars:
@@ -41,6 +47,7 @@
     'org.gnome.Software.desktop',\
     'firefox.desktop',\
     'google-chrome.desktop',\
+    'skypeforlinux.desktop',\
     'emacs25.desktop',\
     'org.gnome.Terminal.desktop']"
     backup_excludes: "['$TRASH',\
@@ -90,9 +97,11 @@
         update_cache: yes
       loop:
         - ansible
-        - python-pip            # for the pip module
+        - python-pip            # for the ansible pip module
+        - python-mysqldb        # for ansible mysql module
         - dconf-tools           # for caps lock -> control
         - curl
+        - whois
         - git
         - screen
         - emacs
@@ -105,6 +114,11 @@
         - firefox               # Likely installed already
         - libreoffice           # Likely installed already
         - google-chrome-stable
+    # Until Ansible has a snap module, use this.
+    - name: Ensure Skype installed (not necessarily latest)
+      apt:
+        deb: https://go.skype.com/skypeforlinux-64.deb
+        state: present          # deb only allows present
     - name: Purge installed apps
       apt:
         name: "{{ item }}"

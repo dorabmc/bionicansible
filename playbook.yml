@@ -288,8 +288,6 @@
       loop:
         - { key: '/org/gnome/desktop/input-sources/xkb-options', value: "['caps:ctrl_modifier']" }
         - { key: '/org/gnome/shell/favorite-apps', value: "{{ favorites }}" }
-        # TODO: Fix the password
-        - { key: '/org/gnome/desktop/remote-access/vnc-password', value: "'b3B0aXBsZXg='" }
         - { key: '/org/gnome/desktop/remote-access/authentication-methods', value: "['vnc']" }
         - { key: '/org/gnome/desktop/remote-access/prompt-enabled', value: "false" }
         # Disabling encryption is required for Macs and Windows to connect.

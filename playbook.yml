@@ -20,9 +20,11 @@
 # vagrant ssh
 
 # TODO: afterwards
-# scp -p remote:.ssh/id_ed25519 ~/.ssh
-# scp -r -p remote:.gnupg ~
-# scp -r -p remote:Projects/* ~/Projects
+# scp -p original:~/.ssh/id_ed25519 ~/.ssh
+# scp -p original:~/.aws/credentials ~/.aws
+# scp -r -p original:~/.gnupg ~
+# scp -r -p original:~/Projects ~
+# scp -r -p original:~/Credentials/* ~
 
 # TODO: Configure Chrome: no password saving.
 # TODO: Perhaps download graphics drivers?
@@ -37,6 +39,8 @@
 
 - hosts: all
   vars:
+    clojure_version: "1.9.0.381" # until an apt package is available
+    clojure_sha256: "sha256:cab9d1dbd0ecd5116d132f3d05ac917ec6168d1253d1666f5737e8f02000a492"
     favorites: "['org.gnome.Nautilus.desktop',\
     'libreoffice-writer.desktop',\
     'org.gnome.Software.desktop',\
@@ -161,6 +165,26 @@
       loop:
         - virtualenv
         - psutil                # for the dconf ansible module
+    # Need this until there is an apt package for Clojure
+    - name: Check current Clojure version
+      shell: grep Version /usr/local/bin/clojure 2> /dev/null | sed -e 's/.*Version = //'
+      args:
+        warn: false
+      register: chkclj
+      changed_when: false
+    - name: Get Clojure installer
+      get_url:
+        url: "https://download.clojure.org/install/linux-install-{{ clojure_version }}.sh"
+        dest: "/tmp/install-{{ clojure_version }}.sh"
+        mode: 0555
+        checksum: "{{ clojure_sha256 }}"
+      when: chkclj.stdout != clojure_version
+    - name: Install Clojure
+      shell: "/tmp/install-{{ clojure_version }}.sh && rm -f /tmp/install-{{ clojure_version }}.sh"
+      when: chkclj.stdout != clojure_version
+      args:
+        removes: "/tmp/install-{{ clojure_version }}.sh"
+        warn: false
     - name: Enable firewall
       ufw:
         state: enabled
@@ -298,6 +322,20 @@
         dest: ~dorab/.profile
         block: |
           eval `keychain --eval --quiet --quick`
+    - name: Ensure ~/.aws
+      file:
+        path: ~dorab/.aws
+        state: directory
+        mode: 0700
+        owner: dorab
+        group: dorab
+    - name: Copy over ~/.aws/config
+      copy:
+        src: files/aws-config
+        dest: ~dorab/.aws/config
+        mode: 0600
+        owner: dorab
+        group: dorab
     - name: Ensure leiningen
       get_url:
         url: https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein

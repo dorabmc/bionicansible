@@ -23,8 +23,8 @@
 # scp -p original:~/.ssh/id_ed25519 ~/.ssh
 # scp -p original:~/.aws/credentials ~/.aws
 # scp -r -p original:~/.gnupg ~
-# scp -r -p original:~/Projects ~
 # scp -r -p original:~/Credentials/* ~
+# scp -r -p original:~/Projects ~
 
 # TODO: Configure Chrome: no password saving.
 # TODO: Perhaps download graphics drivers?

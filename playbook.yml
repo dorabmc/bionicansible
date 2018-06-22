@@ -16,6 +16,7 @@
 # Use vagrant reload instead of reboot on the vagrant host.
 
 # vagrant init bento/ubuntu-18.04
+# vagrant plugin install vagrant-reload
 # vagrant up
 # vagrant ssh
 
@@ -99,6 +100,7 @@
         - ansible
         - python-pip            # for the ansible pip module
         - python-mysqldb        # for ansible mysql module
+        - unzip                 # for ansible unarchive module
         - dconf-tools           # for caps lock -> control
         - curl
         - whois
@@ -106,6 +108,7 @@
         - screen
         - emacs
         - keychain
+        - default-mysql-client  # or mysql-client-5.7
         - default-jdk
         - openjdk-8-jdk         # For Clojure
         - awscli
@@ -159,7 +162,7 @@
       register: chkvagrantlatest
       changed_when: false
     - name: Check current vagrant version
-      shell: which vagrant > /dev/null && vagrant --version | sed -e 's/Vagrant //'
+      shell: which vagrant > /dev/null && vagrant --version | head -1 | sed -e 's/Vagrant //'
       register: chkvagrantcurrent
       changed_when: false
       failed_when: chkvagrantcurrent.rc > 1
@@ -169,6 +172,36 @@
         {{ chkvagrantlatest.stdout }}/vagrant_\
         {{ chkvagrantlatest.stdout }}_x86_64.deb"
       when: chkvagrantlatest.stdout != chkvagrantcurrent.stdout
+    - name: Check latest terraform version
+      shell: >-
+        curl -s https://releases.hashicorp.com/terraform/ |
+        grep '<a href="/terraform/[0-9]*\.[0-9]*\.[0-9]*/">' |
+        head -1 |
+        sed -e 's|.*/terraform/||' -e 's|/.*||'
+      args:
+        warn: false
+      register: chkterraformlatest
+      changed_when: false
+    - name: Check current terraform version
+      shell: which terraform > /dev/null && terraform --version | head -1 | sed -e 's/Terraform v//'
+      register: chkterraformcurrent
+      changed_when: false
+      failed_when: chkterraformcurrent.rc > 1
+    - name: Ensure /usr/local/bin
+      file:
+        path: /usr/local/bin
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+    - name: Install latest terraform
+      unarchive:
+        src: "https://releases.hashicorp.com/terraform/\
+        {{ chkterraformlatest.stdout }}/terraform_\
+        {{ chkterraformlatest.stdout }}_linux_amd64.zip"
+        dest: /usr/local/bin
+        remote_src: true
+      when: chkterraformlatest.stdout != chkterraformcurrent.stdout
     # Clean up
     - name: Remove unneeded apt stuff
       apt:

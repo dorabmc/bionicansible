@@ -27,6 +27,13 @@
 # scp -r -p original:~/Credentials/* ~
 # scp -r -p original:~/Projects ~
 
+# TODO: To install Zoom
+# sudo dpkg -i ~/Downloads/zoom_amd64.deb
+# sudo apt-get -f install
+# libxcb-xtest0
+# sudo dpkg -i ~/Downloads/zoom_amd64.deb
+
+
 # TODO: Configure Chrome: no password saving.
 # TODO: Perhaps download graphics drivers?
 # TODO: make the user addition to be parameterized
@@ -111,6 +118,11 @@
         - default-mysql-client  # or mysql-client-5.7
         - default-jdk
         - openjdk-8-jdk         # For Clojure
+        # TODO: Not sure leiningen works on fresh install. Try it.
+        # The issue might be that the leiningen package checks to see
+        # if openjdk8 is isntalled, but not sure that it checks to see
+        # if it is the default.
+        - leiningen             # Must be after openjdk-8-jdk
         - awscli
         - virtualbox
         - virtualbox-guest-additions-iso

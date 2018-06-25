@@ -1,0 +1,23 @@
+---
+# Tasks for installing the latest vagrant
+- name: Check latest vagrant version
+  shell: >-
+    curl -s https://releases.hashicorp.com/vagrant/ |
+    grep '<a href="/vagrant/[0-9]*\.[0-9]*\.[0-9]*/">' |
+    head -1 |
+    sed -e 's|.*/vagrant/||' -e 's|/.*||'
+  args:
+    warn: false
+  register: chkvagrantlatest
+  changed_when: false
+- name: Check current vagrant version
+  shell: which vagrant > /dev/null && vagrant --version | head -1 | sed -e 's/Vagrant //'
+  register: chkvagrantcurrent
+  changed_when: false
+  failed_when: chkvagrantcurrent.rc > 1
+- name: Install latest vagrant
+  apt:
+    deb: "https://releases.hashicorp.com/vagrant/\
+    {{ chkvagrantlatest.stdout }}/vagrant_\
+    {{ chkvagrantlatest.stdout }}_x86_64.deb"
+  when: chkvagrantlatest.stdout != chkvagrantcurrent.stdout

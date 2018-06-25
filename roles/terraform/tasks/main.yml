@@ -1,0 +1,32 @@
+---
+# Role to install latest terraform
+- name: Check latest terraform version
+  shell: >-
+    curl -s https://releases.hashicorp.com/terraform/ |
+    grep '<a href="/terraform/[0-9]*\.[0-9]*\.[0-9]*/">' |
+    head -1 |
+    sed -e 's|.*/terraform/||' -e 's|/.*||'
+  args:
+    warn: false
+  register: chkterraformlatest
+  changed_when: false
+- name: Check current terraform version
+  shell: which terraform > /dev/null && terraform --version | head -1 | sed -e 's/Terraform v//'
+  register: chkterraformcurrent
+  changed_when: false
+  failed_when: chkterraformcurrent.rc > 1
+- name: Ensure /usr/local/bin
+  file:
+    path: /usr/local/bin
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+- name: Install latest terraform
+  unarchive:
+    src: "https://releases.hashicorp.com/terraform/\
+    {{ chkterraformlatest.stdout }}/terraform_\
+    {{ chkterraformlatest.stdout }}_linux_amd64.zip"
+    dest: /usr/local/bin
+    remote_src: true
+  when: chkterraformlatest.stdout != chkterraformcurrent.stdout

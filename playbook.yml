@@ -116,12 +116,7 @@
         - emacs
         - keychain
         - default-mysql-client  # or mysql-client-5.7
-        - default-jdk
         - openjdk-8-jdk         # For Clojure
-        # TODO: Not sure leiningen works on fresh install. Try it.
-        # The issue might be that the leiningen package checks to see
-        # if openjdk8 is isntalled, but not sure that it checks to see
-        # if it is the default.
         - leiningen             # Must be after openjdk-8-jdk
         - awscli
         - virtualbox
@@ -150,19 +145,6 @@
     - name: Choose jdk8 as default for Clojure
       command: update-java-alternatives --set java-1.8.0-openjdk-amd64
       when: chkjava.stdout.find('link currently points to /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java') == -1
-    # Deal with openjdk8 bugs on ubuntu 18.04
-    - name: Check if bad cacerts file exists
-      command: sha256sum /etc/ssl/certs/java/cacerts
-      register: chkcacerts
-      changed_when: false
-    - name: Remove bad cacerts file
-      file:
-        path: /etc/ssl/certs/java/cacerts
-        state: absent
-      when: chkcacerts.stdout.find('c8f5854f9963dd3e5a5c049af0658e06954d98e7cc9c9dc607401a8435b7abc7') >= 0
-    - name: Update the cacerts
-      command: update-ca-certificates --fresh
-      when: chkcacerts.stdout.find('c8f5854f9963dd3e5a5c049af0658e06954d98e7cc9c9dc607401a8435b7abc7') >= 0
     - name: Check latest vagrant version
       shell: >-
         curl -s https://releases.hashicorp.com/vagrant/ |

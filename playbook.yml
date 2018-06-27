@@ -140,6 +140,7 @@
       command: update-alternatives --display java
       register: chkjava
       changed_when: false
+      check_mode: false
     - name: Choose jdk8 as default for Clojure
       command: update-java-alternatives --set java-1.8.0-openjdk-amd64
       when: chkjava.stdout.find('link currently points to /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java') == -1
@@ -151,6 +152,8 @@
     - name: Remove unneeded apt stuff
       apt:
         autoremove: yes
+    # The pip module always returns changed = True
+    # in check mode when state: latest
     - name: Install python packages via pip
       pip:
         name: "{{ item }}"

@@ -10,9 +10,11 @@
     warn: false
   register: chkvagrantlatest
   changed_when: false
+  check_mode: false
 - name: Check current vagrant version
   shell: which vagrant > /dev/null && vagrant --version | head -1 | sed -e 's/Vagrant //'
   register: chkvagrantcurrent
+  check_mode: false
   changed_when: false
   failed_when: chkvagrantcurrent.rc > 1
 - name: Install latest vagrant

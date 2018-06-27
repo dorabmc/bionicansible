@@ -9,10 +9,12 @@
   args:
     warn: false
   register: chkterraformlatest
+  check_mode: false
   changed_when: false
 - name: Check current terraform version
   shell: which terraform > /dev/null && terraform --version | head -1 | sed -e 's/Terraform v//'
   register: chkterraformcurrent
+  check_mode: false
   changed_when: false
   failed_when: chkterraformcurrent.rc > 1
 - name: Ensure /usr/local/bin

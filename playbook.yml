@@ -33,6 +33,8 @@
 # libxcb-xtest0
 # sudo dpkg -i ~/Downloads/zoom_amd64.deb
 
+# TODO: is keychain working as it should?
+# Test out using emacs, shell and ssh.
 
 # TODO: Configure Chrome: no password saving.
 # TODO: Perhaps download graphics drivers?
@@ -49,7 +51,7 @@
 - hosts: all
   vars:
     favorites: "['org.gnome.Nautilus.desktop',\
-    'libreoffice-writer.desktop',\
+    'libreoffice-startcenter.desktop',\
     'org.gnome.Software.desktop',\
     'firefox.desktop',\
     'google-chrome.desktop',\
@@ -58,6 +60,7 @@
     'org.gnome.Terminal.desktop']"
     backup_excludes: "['$TRASH',\
     '$DOWNLOAD',\
+    '/home/dorab/.dbus',\
     '/home/dorab/VirtualBox VMs',\
     '/home/dorab/.vagrant',\
     '/home/dorab/.vagrant.d']"

@@ -27,6 +27,8 @@
 # scp -r -p original:~/Credentials/* ~
 # scp -r -p original:~/Projects ~
 
+# TODO: Set my default ~/.clojure/deps.edn
+
 # TODO: To install Zoom
 # sudo dpkg -i ~/Downloads/zoom_amd64.deb
 # sudo apt-get -f install
@@ -119,6 +121,7 @@
         - default-mysql-client  # or mysql-client-5.7
         - openjdk-8-jdk         # For Clojure
         - leiningen             # Must be after openjdk-8-jdk
+        - rlwrap                # For clj
         - awscli
         - virtualbox
         - virtualbox-guest-additions-iso

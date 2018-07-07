@@ -39,6 +39,7 @@
 # Test out using emacs, shell and ssh.
 
 # TODO: Configure Chrome: no password saving.
+# TODO: Configure multiple screens. Primary to right.
 # TODO: Perhaps download graphics drivers?
 # TODO: make the user addition to be parameterized
 # TODO: Harden sshd (maybe already OK).
@@ -128,6 +129,7 @@
         - firefox               # Likely installed already
         - libreoffice           # Likely installed already
         - google-chrome-stable
+#        - texlive-latex-extra
     # Until Ansible has a snap module, use this.
     - name: Ensure Skype installed (not necessarily latest)
       apt:

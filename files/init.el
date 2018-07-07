@@ -3,18 +3,24 @@
 ;; just comment it out by adding a semicolon to the start of the line.
 ;; You may delete these explanatory comments.
 (package-initialize)
-;; Periodically run (list-packages) to update.
-;; On initial install, do the following two lines:
-;; (package-refresh-contents)
-;; (package-install-selected-packages)
+
+;; On initial install, do the following:
+;; Note that the initial startup will complain about exec-path-from-shell-initialize
+;; Ignore that.
+;; M-x package-refresh-contents
+;; M-x package-install-selected-packages
+;; For some reason, the list of packages will not include org, so have to install manually.
+;; M-x list-packages
+;; Then search for "available org" in the pacakge list buffer
+;; Install the org package manually ("i", then "x", then "y").
+;; Then restart emacs.
+
+;; Periodically run (list-packages) to update packages.
+
 ;; Currently selected packages are in the var package-selected-packages
 
 
-(defun dorab-after-init-hook ()
-  ;; do stuff after package initialization
-  (exec-path-from-shell-initialize)
-  )
-(add-hook 'after-init-hook 'dorab-after-init-hook)
+(add-hook 'after-init-hook 'exec-path-from-shell-initialize)
 
 ;; for Infobright
 (defun sql-mysqlib ()

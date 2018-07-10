@@ -27,8 +27,6 @@
 # scp -r -p original:~/Credentials/* ~
 # scp -r -p original:~/Projects ~
 
-# TODO: Set my default ~/.clojure/deps.edn
-
 # TODO: To install Zoom
 # sudo dpkg -i ~/Downloads/zoom_amd64.deb
 # sudo apt-get -f install
@@ -129,7 +127,7 @@
         - firefox               # Likely installed already
         - libreoffice           # Likely installed already
         - google-chrome-stable
-#        - texlive-latex-extra
+        - texlive-latex-extra
     # Until Ansible has a snap module, use this.
     - name: Ensure Skype installed (not necessarily latest)
       apt:
@@ -303,7 +301,7 @@
         group: dorab
     - name: Ensure keychain is started from .profile
       blockinfile:
-        dest: ~dorab/.profile
+        path: ~dorab/.profile
         block: |
           eval `keychain --eval --quiet --quick`
     - name: Ensure ~/.aws
@@ -339,3 +337,17 @@
         dest: ~dorab/.lein/profiles.clj
         owner: dorab
         group: dorab
+    # Previously installed by the Clojure role
+    - name: Customize ~/.clojure/deps.edn
+      blockinfile:
+        path: /home/dorab/.clojure/deps.edn
+        marker: ";; {mark} ANSIBLE MANAGED BLOCK"
+        block: |
+          :aliases {:outdated {:extra-deps {olical/depot {:mvn/version "1.1.0"}}
+                    :main-opts ["-m" "depot.outdated.main"]}
+          :depify {:extra-deps {org.clojure/clojure {:mvn/version "1.9.0"}
+                                depify {:git/url "https://github.com/hagmonk/depify"
+                                        :sha "04329744872890711dbba8939a16e9987dd33bb3"}}
+                   :main-opts  ["-m" "depify.project"]}
+          }
+        insertbefore: "^}$"

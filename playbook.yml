@@ -111,7 +111,11 @@
         - python-mysqldb        # for ansible mysql module
         - unzip                 # for ansible unarchive module
         - dconf-tools           # for caps lock -> control
+        - duplicity             # for deja-dup
+        - python-gi             # for deja-dup
         - curl
+        - ssh
+        - net-tools             # for netstat
         - whois
         - git
         - screen
@@ -128,6 +132,11 @@
         - libreoffice           # Likely installed already
         - google-chrome-stable
         - texlive-latex-extra
+    - name: Ensure sshd running
+      service:
+        name: ssh
+        enabled: yes
+        state: started
     # Until Ansible has a snap module, use this.
     - name: Ensure Skype installed (not necessarily latest)
       apt:
@@ -248,6 +257,8 @@
         owner: dorab
     # TODO: Install all current emacs packages
     # emacs --batch -exec package-install-selected-packages
+    # Note: dconf does not always work. Sadly.
+    # Wonder if there is a way to force a refresh?
     - name: Set dconf settings
       dconf:
         key: "{{ item.key }}"
@@ -337,17 +348,15 @@
         dest: ~dorab/.lein/profiles.clj
         owner: dorab
         group: dorab
-    # Previously installed by the Clojure role
-    - name: Customize ~/.clojure/deps.edn
-      blockinfile:
-        path: /home/dorab/.clojure/deps.edn
-        marker: "  ;; {mark} ANSIBLE MANAGED BLOCK"
-        block: |
-            :aliases {:outdated {:extra-deps {olical/depot {:mvn/version "1.1.0"}}
-                                 :main-opts ["-m" "depot.outdated.main"]}
-                      :depify {:extra-deps {org.clojure/clojure {:mvn/version "1.9.0"}
-                                            depify {:git/url "https://github.com/hagmonk/depify"
-                                                    :sha "04329744872890711dbba8939a16e9987dd33bb3"}}
-                               :main-opts  ["-m" "depify.project"]}
-                      }
-        insertbefore: "^}$"
+    - name: Ensure ~/.clojure
+      file:
+        path: ~dorab/.clojure
+        state: directory
+        owner: dorab
+        group: dorab
+    - name: Copy over deps.edn
+      copy:
+        src: files/deps.edn
+        dest: ~dorab/.clojure/deps.edn
+        owner: dorab
+        group: dorab

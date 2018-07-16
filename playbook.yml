@@ -255,6 +255,14 @@
         src: files/init.el
         dest: ~dorab/.emacs.d/init.el
         owner: dorab
+        group: dorab
+    # This could be a problem to keep updated.
+    - name: Ensure personal aspell dictionary
+      copy:
+        src: files/aspell.en.pws
+        dest: ~dorab/.aspell.en.pws
+        owner: dorab
+        group: dorab
     # TODO: Install all current emacs packages
     # emacs --batch -exec package-install-selected-packages
     # Note: dconf does not always work. Sadly.

@@ -196,6 +196,8 @@
         port: "{{ item.port }}"
       loop:
         - { proto: 'tcp', port: 'ssh' }
+        # leave off the 5900 if using port forwarding
+        - { proto: 'tcp', port: '5900' }
     #########
     # Now the user-specific stuff
     - name: Ensure there is group dorab
@@ -278,6 +280,8 @@
         - { key: '/org/gnome/shell/favorite-apps', value: "{{ favorites }}" }
         - { key: '/org/gnome/desktop/remote-access/authentication-methods', value: "['vnc']" }
         - { key: '/org/gnome/desktop/remote-access/prompt-enabled', value: "false" }
+        - { key: '/org/gnome/desktop/remote-access/vnc-password', value: "'b3B0aXBsZXg='" }
+        # vnc-password seems to be needed to turn on vnc
         # Disabling encryption is required for Macs and Windows to connect.
         - { key: '/org/gnome/desktop/remote-access/require-encryption', value: "false" }
         - { key: '/org/gnome/deja-dup/backend', value: "'local'" }

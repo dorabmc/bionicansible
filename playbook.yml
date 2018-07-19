@@ -282,6 +282,8 @@
         - { key: '/org/gnome/desktop/remote-access/prompt-enabled', value: "false" }
         - { key: '/org/gnome/desktop/remote-access/vnc-password', value: "'b3B0aXBsZXg='" }
         # vnc-password seems to be needed to turn on vnc
+        # There may be another setting to allow vino to listen on all
+        # interfaces. Not sure how to set that programmatically.
         # Disabling encryption is required for Macs and Windows to connect.
         - { key: '/org/gnome/desktop/remote-access/require-encryption', value: "false" }
         - { key: '/org/gnome/deja-dup/backend', value: "'local'" }

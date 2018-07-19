@@ -82,6 +82,16 @@
     - name: Gather facts anyways
       action: setup
   tasks:
+    - name: Check recommended graphics driver
+      command: ubuntu-drivers devices
+      register: chkdrivers
+      changed_when: false
+      check_mode: false
+    - name: Set the recommended driver as a fact
+      set_fact:
+        recommended_graphics_driver: "{{ chkdrivers.stdout | regex_search(regex,'\\1') | first }}"
+      vars:
+        regex: '.*\ndriver *: ([^ ]*) - distro [^ ]* recommended\n.*'
     # Keys first, then repos, then the dist-upgrade.
     - name: Add signing keys for Google chrome
       apt_key:
@@ -131,7 +141,9 @@
         - firefox               # Likely installed already
         - libreoffice           # Likely installed already
         - google-chrome-stable
+        # - chromium-browser
         - texlive-latex-extra
+        - "{{ recommended_graphics_driver }}"
     - name: Ensure sshd running
       service:
         name: ssh

@@ -143,6 +143,7 @@
         - google-chrome-stable
         # - chromium-browser
         - texlive-latex-extra
+        - dos2unix
         - "{{ recommended_graphics_driver }}"
     - name: Ensure sshd running
       service:
@@ -290,6 +291,7 @@
       loop:
         - { key: '/org/gnome/desktop/input-sources/xkb-options', value: "['caps:ctrl_modifier']" }
         - { key: '/org/gnome/shell/favorite-apps', value: "{{ favorites }}" }
+        - { key: '/org/gnome/desktop/interface/clock-show-date', value: "true" }
         - { key: '/org/gnome/desktop/remote-access/authentication-methods', value: "['vnc']" }
         - { key: '/org/gnome/desktop/remote-access/prompt-enabled', value: "false" }
         - { key: '/org/gnome/desktop/remote-access/vnc-password', value: "'b3B0aXBsZXg='" }

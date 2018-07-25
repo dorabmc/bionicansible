@@ -272,10 +272,12 @@
         owner: dorab
         group: dorab
     # This could be a problem to keep updated.
+    # backup: true helps to recover if not.
     - name: Ensure personal aspell dictionary
       copy:
         src: files/aspell.en.pws
         dest: ~dorab/.aspell.en.pws
+        backup: true
         owner: dorab
         group: dorab
     # TODO: Install all current emacs packages

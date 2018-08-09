@@ -249,6 +249,7 @@
       copy:
         src: files/sshconfig
         dest: ~dorab/.ssh/config
+        backup: true
         owner: dorab
         group: dorab
         mode: 0600
@@ -269,6 +270,7 @@
       copy:
         src: files/init.el
         dest: ~dorab/.emacs.d/init.el
+        backup: true
         owner: dorab
         group: dorab
     # This could be a problem to keep updated.
@@ -332,6 +334,7 @@
       copy:
         src: files/global_gitignore
         dest: ~dorab/.config/git/ignore
+        backup: true
         owner: dorab
         group: dorab
     - name: Ensure my screenrc
@@ -376,6 +379,7 @@
       copy:
         src: files/profiles.clj
         dest: ~dorab/.lein/profiles.clj
+        backup: true
         owner: dorab
         group: dorab
     - name: Ensure ~/.clojure
@@ -388,5 +392,6 @@
       copy:
         src: files/deps.edn
         dest: ~dorab/.clojure/deps.edn
+        backup: true
         owner: dorab
         group: dorab

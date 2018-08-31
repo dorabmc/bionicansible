@@ -4,6 +4,7 @@
                   [jonase/eastwood "RELEASE"]   ; clojure lint
                   [lein-kibit "RELEASE"]        ; code suggestions
                   [lein-bikeshed "RELEASE"]     ; check spacing and lengths
+                  [lein-cloverage "RELEASE"]    ; code coverage
                   [criterium "0.4.4"]           ; benchmarking
                   [lein-pprint "RELEASE"]       ; pprint the project.clj
                   ]

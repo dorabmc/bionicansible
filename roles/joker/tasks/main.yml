@@ -1,0 +1,34 @@
+---
+# Role to install latest joker
+- name: Check latest joker version
+  shell: >-
+    curl -s https://github.com/candid82/joker/releases |
+    grep '<a href="/candid82/joker/releases/download/v[0-9]*\.[0-9]*\.[0-9]*/joker-.*linux-amd64.zip' |
+    head -1 |
+    sed -e 's|.*/joker/releases/download/v||' -e 's|/.*||'
+  args:
+    warn: false
+  register: chkjokerlatest
+  check_mode: false
+  changed_when: false
+- name: Check current joker version
+  shell: which joker > /dev/null && joker --version | head -1 | sed -e 's/v//'
+  register: chkjokercurrent
+  check_mode: false
+  changed_when: false
+  failed_when: chkjokercurrent.rc > 1
+- name: Ensure /usr/local/bin
+  file:
+    path: /usr/local/bin
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+- name: Install latest joker
+  unarchive:
+    src: "https://github.com/candid82/joker/releases/download/v\
+    {{ chkjokerlatest.stdout }}/joker-\
+    {{ chkjokerlatest.stdout }}-linux-amd64.zip"
+    dest: /usr/local/bin
+    remote_src: true
+  when: chkjokerlatest.stdout != chkjokercurrent.stdout

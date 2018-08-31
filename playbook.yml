@@ -176,6 +176,8 @@
         name: vagrant
     - import_role:
         name: terraform
+    - import_role:
+        name: joker
     # Clean up
     - name: Remove unneeded apt stuff
       apt:

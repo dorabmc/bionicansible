@@ -1,10 +1,85 @@
 {
- :aliases {:outdated {:extra-deps {olical/depot {:mvn/version "1.1.0"}}
+ :aliases {
+           ;; Different clojure versions:
+           :1.8 {:override-deps {org.clojure/clojure {:mvn/version "1.8.0"}}}
+           :1.9 {:override-deps {org.clojure/clojure {:mvn/version "1.9.0"}}}
+           :1.10 {:override-deps {org.clojure/clojure {:mvn/version "1.10.0"}}}
+           :master {:override-deps {org.clojure/clojure {:mvn/version "1.11.0-master-SNAPSHOT"}}}
+
+           ;; testing and debugging tools:
+           :test {:extra-paths ["test" "src/test/clojure"]
+                  :extra-deps {org.clojure/test.check {:mvn/version "RELEASE"}}}
+           ;; - see https://github.com/cognitect-labs/test-runner
+           ;; - run your tests: clj -A:test:runner
+           :runner {:extra-deps {com.cognitect/test-runner
+                                 {:git/url "https://github.com/cognitect-labs/test-runner"
+                                  :sha "3cb0a9daf1cb746259dc8309b218f9211ad3b33b"}}
+                    :main-opts ["-m" "cognitect.test-runner"
+                                "-d" "test"
+                                "-d" "src/test/clojure"]}
+           ;; see https://github.com/jonase/eastwood#running-eastwood-in-a-repl
+           :eastwood {:extra-deps {jonase/eastwood {:mvn/version "RELEASE"}}
+                      :extra-paths ["test" "src/test/clojure"]
+                      :main-opts ["-m" "eastwood.lint" "{:source-paths,[\"src\"],:test-paths,[\"test\"]}"]}
+
+           ;; - see https://github.com/clojure-expectations/expectations
+           ;; - run your expectations: clj -A:test:expect:runner
+           :expect {:extra-deps {expectations {:mvn/version "RELEASE"}}}
+           ;; - see https://github.com/hugoduncan/criterium/
+           ;; - (require '[criterium.core :refer [bench]])
+           ;; - (bench (your-expression))
+           :bench {:extra-deps {criterium {:mvn/version "RELEASE"}}}
+           ;; - see https://github.com/clojure-goes-fast/clj-memory-meter
+           ;; - (require '[clj-memory-meter.core :as mm])
+           ;; - (mm/measure (your-expression))
+           :measure {:extra-deps {com.clojure-goes-fast/clj-memory-meter {:mvn/version "RELEASE"}}}
+           ;; - see https://github.com/Olical/depot
+           :outdated {:extra-deps {olical/depot {:mvn/version "RELEASE"}}
                       :main-opts ["-m" "depot.outdated.main"]}
-           :depify {:extra-deps {org.clojure/clojure {:mvn/version "1.9.0"}
-                                 depify {:git/url "https://github.com/hagmonk/depify"
-                                         :sha "04329744872890711dbba8939a16e9987dd33bb3"}}
-                    :main-opts  ["-m" "depify.project"]}
+
+           :deps ; to get access to clojure.tools.deps.alpha.repl/add-lib
+           ;; - now you can add new deps to a running REPL:
+           ;; (require '[clojure.tools.deps.alpha.repl :refer [add-lib]])
+           ;; (add-lib 'some/library {:mvn/version "RELEASE"})
+           ;; - and you can git deps too; here's how to get the master version of a lib:
+           ;; (require '[clojure.tools.gitlibs :as gitlibs])
+           ;; (defn load-master [lib]
+           ;;   (let [git (str "https://github.com/" lib ".git")]
+           ;;    (add-lib lib {:git/url git :sha (gitlibs/resolve git "master")})))
+           ;; - e.g., using the GitHub path (not the usual Maven group/artifact):
+           ;; (load-master 'clojure/tools.trace)
+           {:extra-deps {org.clojure/tools.deps.alpha
+                         {:git/url "https://github.com/clojure/tools.deps.alpha"
+                          :sha "e160f184f051f120014244679831a9bccb37c9de"}}}
+           ;; project creation from templates:
+           ;; - see https://github.com/seancorfield/clj-new
+           ;; - create an application project:
+           ;;   - clj -A:new app myname/myapp
+           ;;   - cd myapp
+           ;;   - clj -m myname.myapp # run it!
+           ;;   - clj -A:test:runner # run the tests!
+           ;; - create a library project:
+           ;;   - clj -A:new lib myname/my-cool-lib
+           ;;   - cd my-cool-lib
+           ;;   - clj -A:test:runner # run the tests!
+           :new {:extra-deps {seancorfield/clj-new {:mvn/version "RELEASE"}}
+                 :main-opts ["-m" "clj-new.create"]}
+
+           ;; uberjar building:
+           ;; - see https://github.com/seancorfield/depstar for a minimalist approach:
+           ;;   - clj -A:uberjar result.jar
+           ;; - to run it:
+           ;;   - java -cp result.jar clojure.main -m mymain.namespace
+           ;; - build a library JAR:
+           ;;   - clj -A:jar result-lib.jar
+           :uberjar {:extra-deps {seancorfield/depstar {:mvn/version "RELEASE"}}
+                     :main-opts ["-m" "hf.depstar.uberjar"]}
+           :jar {:extra-deps {seancorfield/depstar {:mvn/version "RELEASE"}}
+                 :main-opts ["-m" "hf.depstar.jar"]}
+
+           ;; - inspired by Ruby's -pne command line option which lets you process lines of stdin bound to $_
+           ;; - usage: cat file-of-numbers.txt | clj -Mpne -e '($ (-> $_ Long/parseLong inc))'
+           :pne {:main-opts,["-e","(defmacro,$,[&,body],(list,'while,(list,'when-let,'[$_,(read-line)],(let,[v,(gensym)],(list,'let,(vector,v,(list*,'do,body)),(list,'println,v))),'$_)))"]}
            }
  }
 

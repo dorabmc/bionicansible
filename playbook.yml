@@ -42,12 +42,12 @@
 # TODO: make the user addition to be parameterized
 # TODO: Harden sshd (maybe already OK).
 # TODO: Set up default printer.
-# Stop cupsd
+# sudo systemctl stop cups
 # In /etc/cups/printers.conf
-# <DefaultPrinter HP_LaserJet_600_M601_025E84>
+# <DefaultPrinter HP_LaserJet_500_colorMFP_M570dn_2318FD_>
 # ...
 # </DefaultPrinter>
-# Restart cupsd
+# sudo systemctl start cups
 
 - hosts: all
   vars:

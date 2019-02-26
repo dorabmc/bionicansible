@@ -22,15 +22,25 @@
 
 (add-hook 'after-init-hook 'exec-path-from-shell-initialize)
 
-;; for Infobright
-(defun sql-mysqlib ()
+(defun sql-rip ()
+  "Connect to the Rip db. Prefix arg to name the buffer."
   (interactive)
-  (let ((sql-mysql-program "mysql") ; or mysql-ib if infobright installed
-	(sql-port 3309))	    ; only cutlass
+  (let ((default-directory "/ssh:swordro:")
+	(sql-database "rip")
+	(sql-user "mcro")
+	(sql-server "127.0.0.1")
+	(sql-port 3306))
     (call-interactively 'sql-mysql)))
-;; for MySQL
-(setq sql-port 3306)
-(setq sql-mysql-program "mysql")
+
+(defun sql-saw ()
+  "Connect to the Saw db. Prefix arg to name the buffer."
+  (interactive)
+  (let ((default-directory "/ssh:swordro:")
+	(sql-database "saw")
+	(sql-user "mcro")
+	(sql-server "127.0.0.1")
+	(sql-port 3307))
+    (call-interactively 'sql-mysql)))
 
 (put 'narrow-to-region 'disabled nil)
 

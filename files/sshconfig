@@ -37,6 +37,16 @@ Host mc-git
     HostName mc-git.rd43.com
     IdentityFile ~/.ssh/id_ed25519
 
+Host sword
+    User mc
+    HostName sword.rd43.com
+    IdentityFile ~/.ssh/id_ed25519
+
+Host swordro
+    User mcro
+    HostName sword.rd43.com
+    IdentityFile ~/.ssh/id_ed25519
+
 Host github
     User git
     HostName github.com

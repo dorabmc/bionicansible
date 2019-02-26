@@ -131,6 +131,7 @@
         - screen
         - emacs
         - keychain
+        - gnupg2
         - default-mysql-client  # or mysql-client-5.7
         - openjdk-8-jdk         # For Clojure
         - leiningen             # Must be after openjdk-8-jdk

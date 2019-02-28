@@ -134,7 +134,6 @@
         - gnupg2
         - default-mysql-client  # or mysql-client-5.7
         - openjdk-8-jdk         # For Clojure
-        - leiningen             # Must be after openjdk-8-jdk
         - rlwrap                # For clj
         - awscli
         - virtualbox
@@ -177,8 +176,6 @@
         name: vagrant
     - import_role:
         name: terraform
-    - import_role:
-        name: joker
     # Clean up
     - name: Remove unneeded apt stuff
       apt:
@@ -234,6 +231,8 @@
         owner: dorab
         group: dorab
         state: directory
+    - import_role:
+        name: joker
     - name: Ensure ~/.ssh
       file:
         path: ~dorab/.ssh

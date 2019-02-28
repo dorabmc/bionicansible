@@ -76,11 +76,17 @@
            ;;   - java -cp result.jar clojure.main -m mymain.namespace
            ;; - build a library JAR:
            ;;   - clj -A:jar result-lib.jar
-           :uberjar {:extra-deps {seancorfield/depstar {:mvn/version "RELEASE"}}
-                     :main-opts ["-m" "hf.depstar.uberjar"]}
+           :scuberjar {:extra-deps {seancorfield/depstar {:mvn/version "RELEASE"}}
+                       :main-opts ["-m" "hf.depstar.uberjar"]}
            :jar {:extra-deps {seancorfield/depstar {:mvn/version "RELEASE"}}
                  :main-opts ["-m" "hf.depstar.jar"]}
-
+           ;; cambada's uberjar
+           ;; To build:
+           ;;   clj -A:uberjar --app-version "0.1.0-SNAPSHOT"
+           ;; To run:
+           ;;   java -jar target/
+           :uberjar {:extra-deps {luchiniatwork/cambada {:mvn/version "1.0.0"}}
+                     :main-opts ["-m" "cambada.uberjar"]}
            ;; - inspired by Ruby's -pne command line option which lets you process lines of stdin bound to $_
            ;; - usage: cat file-of-numbers.txt | clj -Mpne -e '($ (-> $_ Long/parseLong inc))'
            :pne {:main-opts,["-e","(defmacro,$,[&,body],(list,'while,(list,'when-let,'[$_,(read-line)],(let,[v,(gensym)],(list,'let,(vector,v,(list*,'do,body)),(list,'println,v))),'$_)))"]}

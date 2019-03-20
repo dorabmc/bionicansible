@@ -22,6 +22,24 @@
 
 (add-hook 'after-init-hook 'exec-path-from-shell-initialize)
 
+(defun sql-mysqlib ()
+  "Connect to the Infobright db. Prefix arg to name the buffer."
+  (interactive)
+  (let ((sql-database "saw")
+	(sql-user "mcro")
+	(sql-server "127.0.0.1")
+	(sql-port 3307))
+    (call-interactively 'sql-mysql)))
+
+(defun sql-mysqlib-cutlass ()
+  "Connect to the Infobright db. Prefix arg to name the buffer."
+  (interactive)
+  (let ((sql-database "saw")
+	(sql-user "mcro")
+	(sql-server "cutlass.matchcraft.com")
+	(sql-port 3309))
+    (call-interactively 'sql-mysql)))
+
 (defun sql-rip ()
   "Connect to the Rip db. Prefix arg to name the buffer."
   (interactive)
@@ -37,6 +55,16 @@
   (interactive)
   (let ((default-directory "/ssh:swordro:")
 	(sql-database "saw")
+	(sql-user "mcro")
+	(sql-server "127.0.0.1")
+	(sql-port 3307))
+    (call-interactively 'sql-mysql)))
+
+(defun sql-fuse ()
+  "Connect to the Fuse db. Prefix arg to name the buffer."
+  (interactive)
+  (let ((default-directory "/ssh:swordro:")
+	(sql-database "fuse20190303")
 	(sql-user "mcro")
 	(sql-server "127.0.0.1")
 	(sql-port 3307))

@@ -11,12 +11,14 @@
   register: chkterraformlatest
   check_mode: false
   changed_when: false
+  tags: terraform
 - name: Check current terraform version
   shell: which terraform > /dev/null && terraform --version | head -1 | sed -e 's/Terraform v//'
   register: chkterraformcurrent
   check_mode: false
   changed_when: false
   failed_when: chkterraformcurrent.rc > 1
+  tags: terraform
 - name: Ensure /usr/local/bin
   file:
     path: /usr/local/bin
@@ -24,6 +26,7 @@
     owner: root
     group: root
     mode: 0755
+  tags: terraform
 - name: Install latest terraform
   unarchive:
     src: "https://releases.hashicorp.com/terraform/\
@@ -32,3 +35,4 @@
     dest: /usr/local/bin
     remote_src: true
   when: chkterraformlatest.stdout != chkterraformcurrent.stdout
+  tags: terraform

@@ -182,7 +182,7 @@
         autoremove: yes
     # The pip module always returns changed = True
     # in check mode when state: latest
-    - name: Install python packages via pip
+    - name: Install python packages via pip (In check mode, will show as changed)
       pip:
         name: "{{ item }}"
         state: latest

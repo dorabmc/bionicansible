@@ -11,15 +11,18 @@
   register: chkvagrantlatest
   changed_when: false
   check_mode: false
+  tags: vagrant
 - name: Check current vagrant version
   shell: which vagrant > /dev/null && vagrant --version | head -1 | sed -e 's/Vagrant //'
   register: chkvagrantcurrent
   check_mode: false
   changed_when: false
   failed_when: chkvagrantcurrent.rc > 1
+  tags: vagrant
 - name: Install latest vagrant
   apt:
     deb: "https://releases.hashicorp.com/vagrant/\
     {{ chkvagrantlatest.stdout }}/vagrant_\
     {{ chkvagrantlatest.stdout }}_x86_64.deb"
   when: chkvagrantlatest.stdout != chkvagrantcurrent.stdout
+  tags: vagrant

@@ -8,6 +8,7 @@
   register: chkclj
   changed_when: false
   check_mode: false
+  tags: clojure
 - name: Get Clojure installer
   get_url:
     url: "https://download.clojure.org/install/linux-install-{{ clojure_version }}.sh"
@@ -15,9 +16,11 @@
     mode: 0555
     checksum: "{{ clojure_sha256 }}"
   when: chkclj.stdout != clojure_version
+  tags: clojure
 - name: Install Clojure
   shell: "/tmp/install-{{ clojure_version }}.sh && rm -f /tmp/install-{{ clojure_version }}.sh"
-  when: chkclj.stdout != clojure_version
+  when: (not ansible_check_mode) and ( chkclj.stdout != clojure_version )
   args:
     removes: "/tmp/install-{{ clojure_version }}.sh"
     warn: false
+  tags: clojure

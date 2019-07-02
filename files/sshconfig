@@ -14,22 +14,10 @@ Host axe
     HostName axe.matchcraft.com
     IdentityFile ~/.ssh/dorab-awsaxe-key
 
-Host cutlass
-    User mc
-    HostName cutlass.matchcraft.com
-#    LocalForward 3307 127.0.0.1:3307
-    IdentityFile ~/.ssh/id_ed25519
-
 Host optiplex9020
     User dorab
     PasswordAuthentication yes
     HostName dorab-optiplex-9020.matchcraft.com
-    IdentityFile ~/.ssh/id_ed25519
-
-Host optiplex980
-    User dorab
-    PasswordAuthentication yes
-    HostName dorab-optiplex-980.matchcraft.com
     IdentityFile ~/.ssh/id_ed25519
 
 Host mc-git
@@ -45,6 +33,7 @@ Host sword
 Host swordro
     User mcro
     HostName sword.rd43.com
+    LocalForward 3306 127.0.0.1:3306
     LocalForward 3307 127.0.0.1:3307
     IdentityFile ~/.ssh/id_ed25519
 

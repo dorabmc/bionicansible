@@ -98,6 +98,19 @@
 (setq org-tags-exclude-from-inheritance (quote ("crypt")))
 (setq org-crypt-key nil)		;use symmetric encryption
 
+;; Fix indentation of some common macros
+;;  (define-clojure-indent
+;;    (for-all 1)
+;;    (defroutes 'defun)
+;;    (GET 2)
+;;    (POST 2)
+;;    (PUT 2)
+;;    (DELETE 2)
+;;    (HEAD 2)
+;;    (ANY 2)
+;;    (context 2)
+;;    (reporting 1))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

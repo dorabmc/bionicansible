@@ -294,7 +294,7 @@
     - name: Set dconf settings
       dconf:
         key: "{{ item.key }}"
-        value: "{{ item.value }}"
+        value: "{{ item.value | string }}"
       become: yes
       become_user: dorab
       loop:

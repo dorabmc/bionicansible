@@ -90,11 +90,13 @@
       register: chkdrivers
       changed_when: false
       check_mode: false
+      tags: drivers
     - name: Set the recommended driver as a fact
       set_fact:
         recommended_graphics_driver: "{{ chkdrivers.stdout | regex_search(regex,'\\1') | first }}"
       vars:
         regex: '.*\ndriver *: ([^ ]*) - distro [^ ]* recommended\n.*'
+      tags: drivers
     # Keys first, then repos, then the dist-upgrade.
     - name: Add signing keys for Google chrome
       apt_key:
@@ -113,19 +115,27 @@
       apt:
         upgrade: dist
         update_cache: yes
+        # Need the force_apt_get until
+        # https://github.com/ansible/ansible/issues/56832
+        # is in production (ansible 2.9?)
+        force_apt_get: yes
     - name: Install the lastest versions of listed packages
       apt:
         name: "{{ item }}"
         state: latest
         update_cache: yes
+        # Need the force_apt_get until
+        # https://github.com/ansible/ansible/issues/56832
+        # is in production (ansible 2.9?)
+        force_apt_get: yes
       loop:
         - ansible
-        - python-pip            # for the ansible pip module
-        - python-mysqldb        # for ansible mysql module
+        - python3-pip            # for the ansible pip module
+        - python3-mysqldb        # for ansible mysql module
         - unzip                 # for ansible unarchive module
         - dconf-tools           # for caps lock -> control
         - duplicity             # for deja-dup
-        - python-gi             # for deja-dup
+        - python3-gi             # for deja-dup
         - curl
         - ssh
         - net-tools             # for netstat
@@ -158,11 +168,19 @@
       apt:
         deb: https://go.skype.com/skypeforlinux-64.deb
         state: present          # deb only allows present
+        # Need the force_apt_get until
+        # https://github.com/ansible/ansible/issues/56832
+        # is in production (ansible 2.9?)
+        force_apt_get: yes
     - name: Purge installed apps
       apt:
         name: "{{ item }}"
         state: absent
         purge: yes
+        # Need the force_apt_get until
+        # https://github.com/ansible/ansible/issues/56832
+        # is in production (ansible 2.9?)
+        force_apt_get: yes
       loop:
         - ubuntu-web-launchers  # to remove Amazon icon from launcher
     # Too bad we cannot use the alternatives module
@@ -183,6 +201,10 @@
     - name: Remove unneeded apt stuff
       apt:
         autoremove: yes
+        # Need the force_apt_get until
+        # https://github.com/ansible/ansible/issues/56832
+        # is in production (ansible 2.9?)
+        force_apt_get: yes
     # The pip module always returns changed = True
     # in check mode when state: latest
     - name: Install python packages via pip (In check mode, will show as changed)
@@ -315,6 +337,7 @@
         - { key: '/org/gnome/deja-dup/exclude-list', value: "{{ backup_excludes }}" }
         # Assumes BackupVolume has been setup earlier
         - { key: '/org/gnome/deja-dup/local/folder', value: "'/media/dorab/BackupVolume'" }
+      tags: dconf
     # Assumes git is installed earlier.
     - name: Ensure my global git config
       git_config:

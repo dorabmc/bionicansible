@@ -36,6 +36,15 @@
 # TODO: is keychain working as it should?
 # Test out using emacs, shell and ssh.
 
+# TODO: Set up multiple monitors.
+# TODO: The login prompt comes up on the non-primary display,
+# rather than on the primary (or every) display.
+# The issue is that gdm3 does not honor the X.org monitors.xml.
+# The workaround is to
+# First set up the monitors as needed, and then
+# sudo cp ~/.config/monitors.xml /var/lib/gdm3/.config/
+# sudo chown gdm:gdm /var/lib/gdm3/.config/monitors.xml
+
 # TODO: Configure Chrome: no password saving.
 # TODO: Configure multiple screens. Primary to right.
 # TODO: Perhaps download graphics drivers?

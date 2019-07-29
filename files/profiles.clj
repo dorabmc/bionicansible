@@ -1,4 +1,4 @@
-{:repl {:dependencies [[org.clojure/tools.nrepl "RELEASE"]]}
+{
  :user {:plugins [
                   [lein-ancient "RELEASE"]      ; look for outdated dependency versions
                   [venantius/yagni "RELEASE"]   ; look for dead code

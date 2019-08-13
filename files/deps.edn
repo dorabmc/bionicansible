@@ -5,7 +5,7 @@
            ;; Different clojure versions:
            :1.8 {:override-deps {org.clojure/clojure {:mvn/version "1.8.0"}}}
            :1.9 {:override-deps {org.clojure/clojure {:mvn/version "1.9.0"}}}
-           :1.10 {:override-deps {org.clojure/clojure {:mvn/version "1.10.0"}}}
+           :1.10 {:override-deps {org.clojure/clojure {:mvn/version "1.10.1"}}}
            :master {:override-deps {org.clojure/clojure {:mvn/version "1.11.0-master-SNAPSHOT"}}}
 
            ;; testing and debugging tools:
@@ -44,7 +44,11 @@
            ;; (i/instrument)
            :speculative {:extra-deps {speculative {:mvn/version "RELEASE"}}}
 
-           :deps ; to get access to clojure.tools.deps.alpha.repl/add-lib
+           ;; To be filled in by the project deps.edn.
+           ;; Called by cider when starting a nrepl.
+           :devrepl {}
+           
+           ;; to get access to clojure.tools.deps.alpha.repl/add-lib
            ;; - now you can add new deps to a running REPL:
            ;; (require '[clojure.tools.deps.alpha.repl :refer [add-lib]])
            ;; (add-lib 'some/library {:mvn/version "RELEASE"})
@@ -55,7 +59,7 @@
            ;;    (add-lib lib {:git/url git :sha (gitlibs/resolve git "master")})))
            ;; - e.g., using the GitHub path (not the usual Maven group/artifact):
            ;; (load-master 'clojure/tools.trace)
-           {:extra-deps {org.clojure/tools.deps.alpha
+           :deps {:extra-deps {org.clojure/tools.deps.alpha
                          {:git/url "https://github.com/clojure/tools.deps.alpha"
                           :sha "e160f184f051f120014244679831a9bccb37c9de"}}}
            ;; project creation from templates:

@@ -47,7 +47,12 @@
            ;; To be filled in by the project deps.edn.
            ;; Called by cider when starting a nrepl.
            :devrepl {}
-           
+
+           ;; clj-kondo linter
+           ;; clj -A:clj-kondo --lint src
+           :clj-kondo {:extra-deps {clj-kondo {:mvn/version "RELEASE"}}
+                       :main-opts ["-m" "clj-kondo.main"]}
+
            ;; to get access to clojure.tools.deps.alpha.repl/add-lib
            ;; - now you can add new deps to a running REPL:
            ;; (require '[clojure.tools.deps.alpha.repl :refer [add-lib]])
@@ -96,6 +101,10 @@
            ;;           :main-opts ["-m" "cambada.uberjar"]}
            ;; - inspired by Ruby's -pne command line option which lets you process lines of stdin bound to $_
            ;; - usage: cat file-of-numbers.txt | clj -Mpne -e '($ (-> $_ Long/parseLong inc))'
+           ;;
+           :uberjar {:extra-deps {luchiniatwork/cambada {:mvn/version "1.0.0"}}
+                     :main-opts ["-m" "cambada.uberjar"]}
+
            :pne {:main-opts,["-e","(defmacro,$,[&,body],(list,'while,(list,'when-let,'[$_,(read-line)],(let,[v,(gensym)],(list,'let,(vector,v,(list*,'do,body)),(list,'println,v))),'$_)))"]}
            }
  }

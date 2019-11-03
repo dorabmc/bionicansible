@@ -11,7 +11,7 @@
 ;; M-x package-install-selected-packages
 ;; For some reason, the list of packages will not include org, so have to install manually.
 ;; M-x list-packages
-;; Then search for "available org" in the pacakge list buffer
+;; Then re-search for "available *org" in the pacakge list buffer
 ;; Install the org package manually ("i", then "x", then "y").
 ;; Then restart emacs.
 

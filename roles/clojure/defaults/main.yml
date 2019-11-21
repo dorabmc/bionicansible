@@ -1,5 +1,5 @@
 ---
 # Clojure default vars.
 # Can be overridden in the call to the role.
-clojure_version: "1.10.1.469" # until an apt package is available
-clojure_sha256: "sha256:265e46d492b682cecc346ef018076a3181203dfe5e3dbe455b0f7feab51df70f"
+clojure_version: "1.10.1.489" # until an apt package is available
+clojure_sha256: "sha256:648005c098ee912e200a60221311f437776c482cd253aaf67323e31d43a3317f"

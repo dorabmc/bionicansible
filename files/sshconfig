@@ -42,6 +42,17 @@ Host github
     HostName github.com
     IdentityFile ~/.ssh/id_ed25519
 
+Host vagrant
+  HostName 127.0.0.1
+  User dorab
+  Port 2222
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes
+  LogLevel FATAL
+
 Host *
     Protocol 2
     UseRoaming no

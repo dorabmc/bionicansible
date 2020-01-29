@@ -157,6 +157,7 @@
         - default-mysql-client  # or mysql-client-5.7
         - openjdk-8-jdk         # For Clojure
         - rlwrap                # For clj
+        - npm                   # For shadow-cljs
         - awscli
         - virtualbox
         - virtualbox-guest-additions-iso

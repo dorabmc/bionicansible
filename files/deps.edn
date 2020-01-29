@@ -88,8 +88,8 @@
            ;;   - java -cp result.jar clojure.main -m mymain.namespace
            ;; - build a library JAR:
            ;;   - clj -A:jar result-lib.jar
-           ;; :uberjar {:extra-deps {seancorfield/depstar {:mvn/version "RELEASE"}}
-           ;;           :main-opts ["-m" "hf.depstar.uberjar"]}
+           :uberjar {:extra-deps {seancorfield/depstar {:mvn/version "RELEASE"}}
+                     :main-opts ["-m" "hf.depstar.uberjar"]}
            ;; :jar {:extra-deps {seancorfield/depstar {:mvn/version "RELEASE"}}
            ;;       :main-opts ["-m" "hf.depstar.jar"]}
            ;; cambada's uberjar (does not handle :local/root)
@@ -102,9 +102,26 @@
            ;; - inspired by Ruby's -pne command line option which lets you process lines of stdin bound to $_
            ;; - usage: cat file-of-numbers.txt | clj -Mpne -e '($ (-> $_ Long/parseLong inc))'
            ;;
-           :uberjar {:extra-deps {luchiniatwork/cambada {:mvn/version "1.0.0"}}
-                     :main-opts ["-m" "cambada.uberjar"]}
-
+           ;; :uberjar {:extra-deps {luchiniatwork/cambada {:mvn/version "1.0.0"}}
+           ;;           :main-opts ["-m" "cambada.uberjar"]}
+           ;; garamond for versioning
+           ;; - usage: clj -A:garamond patch --tag --pom
+           :garamond {:extra-deps {com.workframe/garamond {:mvn/version "RELEASE"}}
+                      :main-opts ["-m" "garamond.main"]}
+           ;; metav for versioning
+           ;; - usage: clj -A:release patch --without-sign
+           ;; Does not seem to handle pom file updating.
+           :metav {:extra-deps {metav {:mvn/version "RELEASE"}}}
+           :artifact-name {:extra-deps {metav {:mvn/version "RELEASE"}}
+                           :main-opts ["-m" "metav.display"]}
+           :release {:extra-deps {metav {:mvn/version "RELEASE"}}
+                     :main-opts ["-m" "metav.release"]}
+           :spit     {:extra-deps {metav {:mvn/version "RELEASE"}}
+                      :main-opts ["-m" "metav.spit"
+                                  "--output-dir" "src"
+                                  "--namespace" "yournamespace.meta"
+                                  "--formats" "clj"]}
+           ;;
            :pne {:main-opts,["-e","(defmacro,$,[&,body],(list,'while,(list,'when-let,'[$_,(read-line)],(let,[v,(gensym)],(list,'let,(vector,v,(list*,'do,body)),(list,'println,v))),'$_)))"]}
            }
  }

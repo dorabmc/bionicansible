@@ -130,6 +130,7 @@
  '(package-selected-packages
    (quote
     (cider exec-path-from-shell magit markdown-mode org sql-indent terraform-mode yaml-mode)))
+ '(safe-local-variable-values (quote ((cider-clojure-cli-global-options . ""))))
  '(scroll-bar-mode nil)
  '(sql-mode-hook (quote (sqlind-minor-mode)))
  '(tool-bar-mode nil)

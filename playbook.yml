@@ -215,6 +215,16 @@
         # https://github.com/ansible/ansible/issues/56832
         # is in production (ansible 2.9?)
         force_apt_get: yes
+    - name: Install npm packages
+      npm:
+        name: "{{ item }}"
+        global: yes
+        state: latest
+      loop:
+        - react
+        - react-dom
+        - create-react-class
+        - shadow-cljs
     # The pip module always returns changed = True
     # in check mode when state: latest
     - name: Install python packages via pip (In check mode, will show as changed)

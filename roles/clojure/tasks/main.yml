@@ -2,7 +2,7 @@
 # A role to install the specified version of Clojure
 # Need this until there is an apt package for Clojure
 - name: Check current Clojure version
-  shell: grep Version /usr/local/bin/clojure 2> /dev/null | sed -e 's/.*Version = //'
+  shell: grep Version /usr/local/bin/clojure 2> /dev/null | head -1 | sed -e 's/.*Version = *//'
   args:
     warn: false
   register: chkclj

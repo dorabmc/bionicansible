@@ -66,7 +66,8 @@
            ;; (load-master 'clojure/tools.trace)
            :deps {:extra-deps {org.clojure/tools.deps.alpha
                          {:git/url "https://github.com/clojure/tools.deps.alpha"
-                          :sha "e160f184f051f120014244679831a9bccb37c9de"}}}
+                          :sha "e160f184f051f120014244679831a9bccb37c9de"
+                          :exclusions [org.slf4j/slf4j-nop]}}}
            ;; project creation from templates:
            ;; - see https://github.com/seancorfield/clj-new
            ;; - create an application project:
